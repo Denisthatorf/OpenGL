@@ -63,6 +63,8 @@ ShaderProgramSource shader_parse(const std::string& filepath);
 bool renderer_init(window_state* state)
 {
     window_setContext(state);
+    //TODO: think
+    glfwSwapInterval(1);
 
     glewExperimental = GL_FALSE;
     unsigned int error = glGetError();
@@ -95,6 +97,11 @@ bool renderer_init(window_state* state)
 
     unsigned int shader = shader_create(shader_source.vertexShader, shader_source.fragmentShader);
     glUseProgram(shader);
+
+    //TODO: think
+    int location = glGetUniformLocation(shader, "u_Color");
+    ASSERT(location != (-1));
+    GL_ASSERT(glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f));
 
     return true;
 }
