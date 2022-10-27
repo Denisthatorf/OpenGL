@@ -1,0 +1,22 @@
+[
+{
+  "directory": "/home/denis/Projects/C++/OpenGL/build/linux-debug",
+  "command": "/usr/bin/c++ -DUSE_GLFW -I/home/denis/Projects/C++/OpenGL/vendor/spdlog/include -I/home/denis/Projects/C++/OpenGL/src -g -D_DEBUG -o CMakeFiles/Engine.dir/src/logger.o -c /home/denis/Projects/C++/OpenGL/src/logger.cpp",
+  "file": "/home/denis/Projects/C++/OpenGL/src/logger.cpp"
+},
+{
+  "directory": "/home/denis/Projects/C++/OpenGL/build/linux-debug",
+  "command": "/usr/bin/c++ -DUSE_GLFW -I/home/denis/Projects/C++/OpenGL/vendor/spdlog/include -I/home/denis/Projects/C++/OpenGL/src -g -D_DEBUG -o CMakeFiles/Engine.dir/src/main.o -c /home/denis/Projects/C++/OpenGL/src/main.cpp",
+  "file": "/home/denis/Projects/C++/OpenGL/src/main.cpp"
+},
+{
+  "directory": "/home/denis/Projects/C++/OpenGL/build/linux-debug",
+  "command": "/usr/bin/c++ -DUSE_GLFW -I/home/denis/Projects/C++/OpenGL/vendor/spdlog/include -I/home/denis/Projects/C++/OpenGL/src -g -D_DEBUG -o CMakeFiles/Engine.dir/src/renderer.o -c /home/denis/Projects/C++/OpenGL/src/renderer.cpp",
+  "file": "/home/denis/Projects/C++/OpenGL/src/renderer.cpp"
+},
+{
+  "directory": "/home/denis/Projects/C++/OpenGL/build/linux-debug",
+  "command": "/usr/bin/c++ -DUSE_GLFW -I/home/denis/Projects/C++/OpenGL/vendor/spdlog/include -I/home/denis/Projects/C++/OpenGL/src -g -D_DEBUG -o CMakeFiles/Engine.dir/src/window.o -c /home/denis/Projects/C++/OpenGL/src/window.cpp",
+  "file": "/home/denis/Projects/C++/OpenGL/src/window.cpp"
+}
+]
