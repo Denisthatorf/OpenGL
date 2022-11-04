@@ -9,10 +9,15 @@ public:
     Window(int width, int height, const std::string& title);
     ~Window();
 
-    bool poolEvents();
-    void setContext();
-    void swapBuffers();
+    bool PoolEvents();
+    void SetContext();
+    void SwapBuffers();
+
+    void InitImGui();
 
 private:
     GLFWwindow* m_glfwWindow;
+    bool m_isImGuiUsed;
+
+    const char* glsl_version = "#version 130";
 };

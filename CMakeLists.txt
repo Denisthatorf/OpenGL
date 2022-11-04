@@ -22,7 +22,7 @@ add_subdirectory(
 
 add_executable(Engine 
     ${SOURCES_C} ${SOURCES_CXX}
-    ${CMAKE_CURRENT_SOURCE_DIR}/vendor/stb_image/stb_image.cpp)
+)
 
 set(OpenGL_GL_PREFERENCE GLVND)
 find_package(OpenGL REQUIRED)
@@ -36,7 +36,7 @@ target_include_directories(Engine
         ${CMAKE_SOURCE_DIR}/vendor/spdlog/include
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src/
-        ${CMAKE_CURRENT_SOURCE_DIR}/vendor/
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vendor/
 )
 
 target_link_libraries(Engine
