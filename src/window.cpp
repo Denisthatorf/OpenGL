@@ -1,35 +1,39 @@
+#include "opengl/opengl_types.hpp"
 #include "window.hpp"
-#include <GLFW/glfw3.h>
 
-bool window_create(window_state* state)
+Window::Window(int width, int height, const std::string& title)
 {
-    if (!glfwInit()) 
-        return false;
+    if (!glfwInit()){}
+    //TODO: throw exeption
 
-    state->window = glfwCreateWindow(640, 480, "Simple example", NULL, NULL);
-    if (!state->window)
-        return false;
+    m_glfwWindow = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
-    return true;
+    if(m_glfwWindow){}
+    //TODO: throw exeption
 }
-void window_destroy(window_state* state)
+Window::~Window()
 {
-    glfwDestroyWindow(state->window);
+    glfwDestroyWindow(m_glfwWindow);
     glfwTerminate();
 }
 
-bool window_poolEvents(window_state* state)
+bool Window::poolEvents()
 {
-    if(!glfwWindowShouldClose(state->window))
+    if(!glfwWindowShouldClose(m_glfwWindow))
     {         
         glfwPollEvents();
-        glfwSwapBuffers(state->window);
+        glfwSwapBuffers(m_glfwWindow);
         return true;
     }
     return false;
 }
 
-void window_setContext(window_state* state)
+void Window::setContext()
 {
-    glfwMakeContextCurrent(state->window);
+    //TODO: think about move to renderer
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    glfwMakeContextCurrent(m_glfwWindow);
 }

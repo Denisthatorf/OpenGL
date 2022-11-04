@@ -1,12 +1,18 @@
+#pragma once
+
 #include <GLFW/glfw3.h>
+#include <string>
 
-struct window_state
+class Window
 {
-    GLFWwindow* window;
+public:
+    Window(int width, int height, const std::string& title);
+    ~Window();
+
+    bool poolEvents();
+    void setContext();
+    void swapBuffers();
+
+private:
+    GLFWwindow* m_glfwWindow;
 };
-
-bool window_create(window_state* state);
-void window_destroy(window_state* state);
-
-bool window_poolEvents(window_state* state);
-void window_setContext(window_state* state);

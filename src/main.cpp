@@ -1,34 +1,102 @@
-#define GLFW_INCLUDE_VULKAN
 #include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
-#include "renderer.hpp"
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <sstream>
+
+#include "opengl/renderer.hpp"
+#include "opengl/opengl_types.hpp"
+
+#include "opengl/opengl_types.hpp"
+#include "opengl/vertexBuffer.hpp"
+#include "opengl/vertexBufferLayout.hpp"
+#include "opengl/indexBuffer.hpp"
+#include "opengl/vertexArray.hpp"
+#include "opengl/shader.hpp"
 #include "window.hpp"
 
-int main()
+int main(void)
 {
-    window_state state;
-    window_create(&state);
+    Window window(960, 540, "Hello World");
+    window.setContext();
 
-    renderer_init(&state);
+    //TODO: remove
+    glfwSwapInterval(1);
+    
+    if (glewInit() != GLEW_OK)
+        std::cout << "glewInit error!" << std::endl;
 
-    while(window_poolEvents(&state))
+    // Log the OpenGL version used because we can
+    std::cout << glGetString(GL_VERSION) << std::endl;
+
     {
-        render_test_draw();
+        float positions[] =
+        {
+            -0.5f, -0.5f, //0
+             0.5f, -0.5f, //1
+             0.5f,  0.5f, //2
+            -0.5f,  0.5f  //3
+        };
+        unsigned int indices[] =
+        {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        //GL_ASSERT (glEnable(GL_BLEND));
+        //GL_ASSERT (glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+
+        VertexArray va;
+        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
+        
+        IndexBuffer ib(indices, 6);
+
+        //TODO: make relative
+        Shader shader("/home/denis/Projects/C++/OpenGL/shaders/red_triangle.shader");
+        shader.Bind();
+        shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
+        //shader.SetUniformMat4f("u_MVP", mvp);
+
+        //Texture texture("/home/denis/Projects/C++/else/OpenGLTutorial/res/textures/ChernoLogo.png");
+        //texture.Bind();
+        //shader.SetUniform1i("u_Texture", 0);
+
+        va.Unbind();
+        vb.Unbind();
+        ib.Unbind();
+        shader.Unbind();
+
+        Renderer renderer;
+
+        // Animation stuff
+        float r = 0.0f;
+        float increment = 0.05f;
+
+        // Loop until the user closes the window
+        while (window.poolEvents())
+        {
+            renderer.Clear();
+
+            shader.Bind();
+            shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
+
+            renderer.Draw(va, ib, shader);
+
+            // Animate the r value between 0.0 and 1.0
+            if (r > 1.0f)
+                increment = -0.05f;
+            else if (r < 0.0f)
+                increment = 0.05f;
+            r += increment;
+        }
     }
 
-    window_destroy(&state);
+    glfwTerminate();
+    return 0;
 }
-
-//int main() {
-//  // start GLEW extension handler
-//  glewExperimental = GL_TRUE;
-//  glewInit();
-//
-//  // get version info
-//
-//  // tell GL to only draw onto a pixel if the shape is closer to the viewer
-//  glEnable(GL_DEPTH_TEST); // enable depth-testing
-//  glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
-//
-//  return 0;
-//}
