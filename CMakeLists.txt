@@ -25,8 +25,8 @@ target_include_directories(Engine
     PUBLIC
         ${CMAKE_SOURCE_DIR}/vendor/spdlog/include
     PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/src
-        
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/
+        ${CMAKE_CURRENT_SOURCE_DIR}/src/vendor/
 )
 
 target_link_libraries(Engine

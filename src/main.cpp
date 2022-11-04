@@ -15,11 +15,12 @@
 #include "opengl/indexBuffer.hpp"
 #include "opengl/vertexArray.hpp"
 #include "opengl/shader.hpp"
+#include "opengl/texture.hpp"
 #include "window.hpp"
 
 int main(void)
 {
-    Window window(960, 540, "Hello World");
+    Window window(900, 800, "Hello World");
     window.setContext();
 
     //TODO: remove
@@ -34,10 +35,10 @@ int main(void)
     {
         float positions[] =
         {
-            -0.5f, -0.5f, //0
-             0.5f, -0.5f, //1
-             0.5f,  0.5f, //2
-            -0.5f,  0.5f  //3
+            -0.5f, -0.5f, 0.0f, 0.0f,   //0
+             0.5f, -0.5f, 1.0f, 0.0f,   //1
+             0.5f,  0.5f, 1.0f, 1.0f,   //2
+            -0.5f,  0.5f,  0.0f, 1.0f   //3
         };
         unsigned int indices[] =
         {
@@ -45,27 +46,29 @@ int main(void)
             2, 3, 0
         };
 
-        //GL_ASSERT (glEnable(GL_BLEND));
-        //GL_ASSERT (glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+        GL_ASSERT (glEnable(GL_BLEND));
+        GL_ASSERT (glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
         VertexArray va;
-        VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
 
         VertexBufferLayout layout;
+        layout.Push<float>(2);
         layout.Push<float>(2);
         va.AddBuffer(vb, layout);
         
         IndexBuffer ib(indices, 6);
 
         //TODO: make relative
-        Shader shader("/home/denis/Projects/C++/OpenGL/shaders/red_triangle.shader");
+        Shader shader("/home/denis/Projects/C++/OpenGL/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
         //shader.SetUniformMat4f("u_MVP", mvp);
 
-        //Texture texture("/home/denis/Projects/C++/else/OpenGLTutorial/res/textures/ChernoLogo.png");
-        //texture.Bind();
-        //shader.SetUniform1i("u_Texture", 0);
+        //TODO: make relative
+        Texture texture("/home/denis/Projects/C++/OpenGL/texture/ava.jpg");
+        texture.Bind();
+        shader.SetUniform1i("u_Texture", 0);
 
         va.Unbind();
         vb.Unbind();

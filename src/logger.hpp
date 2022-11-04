@@ -5,6 +5,8 @@
  * under the terms of the MIT license. See `log.c` for details.
  */
 
+ //TODO: change
+
 #ifndef LOG_H
 #define LOG_H
 
