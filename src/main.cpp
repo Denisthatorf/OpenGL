@@ -1,6 +1,9 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/fwd.hpp>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -16,7 +19,11 @@
 #include "opengl/vertexArray.hpp"
 #include "opengl/shader.hpp"
 #include "opengl/texture.hpp"
+
 #include "window.hpp"
+
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 
 int main(void)
 {
@@ -35,10 +42,10 @@ int main(void)
     {
         float positions[] =
         {
-            -0.5f, -0.5f, 0.0f, 0.0f,   //0
-             0.5f, -0.5f, 1.0f, 0.0f,   //1
-             0.5f,  0.5f, 1.0f, 1.0f,   //2
-            -0.5f,  0.5f,  0.0f, 1.0f   //3
+            100.0f, 100.0f, 0.0f, 0.0f,   //0
+            200.0f, 100.0f, 1.0f, 0.0f,   //1
+            200.0f,  200.0f, 1.0f, 1.0f,   //2
+            100.0f,  200.0f,  0.0f, 1.0f   //3
         };
         unsigned int indices[] =
         {
@@ -59,11 +66,20 @@ int main(void)
         
         IndexBuffer ib(indices, 6);
 
+        glm::mat4 proj = glm::ortho(0.0f, 900.0f, 0.0f, 800.0f, -1.0f, 1.0f);
+
+        glm::mat4 view(1.0f); 
+        view = glm::translate(view, glm::vec3(-100, 0, 0));
+
+        glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(200, 200, 0));
+
+        glm::mat4 mvp = proj * view * model;
+
         //TODO: make relative
         Shader shader("/home/denis/Projects/C++/OpenGL/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
-        //shader.SetUniformMat4f("u_MVP", mvp);
+        shader.SetUniformMat4f("u_MVP", mvp);
 
         //TODO: make relative
         Texture texture("/home/denis/Projects/C++/OpenGL/texture/ava.jpg");
