@@ -14,5 +14,6 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, const Shader& 
     ib.Bind();
     
     // Draw the current selected buffer
-    GL_ASSERT(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr)); // nullptr, because the indices are bound to the current buffer: GL_ELEMENT_ARRAY_BUFFER
+    // nullptr, because the indices are bound to the current buffer: GL_ELEMENT_ARRAY_BUFFER
+    GL_ASSERT(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr)); 
 }

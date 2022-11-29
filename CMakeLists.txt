@@ -30,6 +30,7 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(glfw3 REQUIRED)
 find_package(glm REQUIRED)
+find_package(GLUT REQUIRED)
 
 target_include_directories(Engine
     PUBLIC
@@ -46,4 +47,5 @@ target_link_libraries(Engine
         glfw
         OpenGL::GLX
         GLEW::GLEW
+        GLUT::GLUT
 )

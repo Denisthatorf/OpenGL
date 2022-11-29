@@ -15,8 +15,10 @@ Window::Window(int width, int height, const std::string& title)
 
     m_glfwWindow = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 
-    if(m_glfwWindow){}
     //TODO: throw exeption
+    if(m_glfwWindow){}
+
+    glfwSwapInterval(1);
 }
 Window::~Window()
 {

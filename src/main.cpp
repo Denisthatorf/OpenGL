@@ -1,8 +1,13 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+#include <cstddef>
+#include <cstdio>
+#include <cstdlib>
+#include <glm/detail/qualifier.hpp>
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
+#include <glm/ext/vector_float3.hpp>
 #include <glm/fwd.hpp>
 #include <iostream>
 #include <fstream>
@@ -25,138 +30,209 @@
 #include "window.hpp"
 
 #include <glm/glm.hpp>
+#include <glm/vec3.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <vector>
 
-#include <imgui/imgui.h>
-#include <imgui/imgui_impl_opengl3.h>
-#include <imgui/imgui_impl_glfw.h>
+#include "ui.hpp"
 
-int main(void)
+struct Point
 {
+    glm::vec3 pos;
+    glm::vec3 color;
+};
+
+std::vector<Point> Deserialize(const std::string& path) {
+    std::vector<Point> result;
+    std::ifstream file;
+    file.open(path);
+
+    if (!file.is_open())
+    {
+        //TODO: error
+        perror("Error open");
+        exit(EXIT_FAILURE);
+    }
+
+    std::string line;
+    while(getline(file, line)) {
+        int i = 0;
+        Point point;
+
+        //TODO:
+        point.color = glm::vec3(60, 60, 60);
+
+        std::istringstream ss(line);
+        std::string token;
+
+        //while(ss >> str)
+        while (getline(ss, token, ' '))
+        {    
+            i += 1;
+
+            switch (i) {
+                case 1:
+                    point.pos.x = std::stof(token);
+                    continue;
+                case 2:
+                    point.pos.y = std::stof(token);
+                    continue;
+                case 3:
+                    point.pos.z = std::stof(token);
+                    continue;
+            }
+
+            //TODO: error
+            perror("Bad format in file");
+            exit(EXIT_FAILURE);
+        }
+
+        if(i != 3)
+        {
+            //TODO: error
+            perror("Bad format in file");
+            exit(EXIT_FAILURE);
+        }
+        
+        result.push_back(point);
+ 
+    }
+
+    file.close();
+    return result;
+}
+
+//TODO: remove
+//std::vector<Point> Deserialize2(const std::string& path)
+//{
+//    std::vector<Point> result;
+//
+//    FILE* file = fopen(path.c_str(), "r");
+//
+//    if (file == NULL) {
+//      perror("Error open");
+//      exit(EXIT_FAILURE);
+//    }
+//    
+//    size_t read;
+//    size_t length = 0;
+//    char* line = NULL;
+//    char* delim = " ";
+//
+//    while ((read = getline(&line, &length, file)) != -1) {
+//        Point point;
+//        int i = 0;
+//
+//        char* token = strtok(line, delim);
+//        while (token)
+//        {
+//            i += 1;
+//
+//            printf("%s\n", token);
+//            token = strtok(NULL, delim);
+//
+//            switch (i) {
+//                case 1:
+//                    point.pos.x = std::stof(token);
+//                    continue;
+//                case 2:
+//                    point.pos.y = std::stof(token);
+//                    continue;
+//                case 3:
+//                    point.pos.z = std::stof(token);
+//                    continue;
+//            }
+//
+//            //TODO: error
+//            perror("Bad format in file");
+//            exit(EXIT_FAILURE);
+//        }
+//
+//        if(i != 3)
+//        {
+//            //TODO: error
+//            perror("Bad format in file");
+//            exit(EXIT_FAILURE);
+//        }
+//        
+//        result.push_back(point);
+//    }
+//
+//    fclose(file);
+//
+//    return result;
+//}
+
+int main() {
     Window window(900, 800, "Hello World");
     window.SetContext();
     window.InitImGui();
-
-    //TODO: remove
-    glfwSwapInterval(1);
     
     if (glewInit() != GLEW_OK)
         std::cout << "glewInit error!" << std::endl;
-
-    // Log the OpenGL version used because we can
     std::cout << glGetString(GL_VERSION) << std::endl;
 
     {
-        float positions[] =
-        {
-            100.0f, 100.0f, 0.0f, 0.0f,   //0
-            200.0f, 100.0f, 1.0f, 0.0f,   //1
-            200.0f,  200.0f, 1.0f, 1.0f,   //2
-            100.0f,  200.0f,  0.0f, 1.0f   //3
-        };
-        unsigned int indices[] =
-        {
-            0, 1, 2,
-            2, 3, 0
-        };
-
-        bool show_demo_window = true;
-        bool show_another_window = false;
-        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+        std::vector<Point> points = Deserialize("/home/denis/Projects/C++/OpenGL/out/ascii.txt");
 
         GL_ASSERT (glEnable(GL_BLEND));
         GL_ASSERT (glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+        //VertexArray va;
+        //VertexBuffer vb(points.data(), points.size()*sizeof(*points.data()));
 
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        va.AddBuffer(vb, layout);
+        //VertexBufferLayout layout;
+        //layout.Push<float>(3);
+        //layout.Push<float>(3);
+        //va.AddBuffer(vb, layout);
         
-        IndexBuffer ib(indices, 6);
-
         glm::mat4 proj = glm::ortho(0.0f, 900.0f, 0.0f, 800.0f, -1.0f, 1.0f);
-
-        glm::mat4 view(1.0f); 
-        view = glm::translate(view, glm::vec3(-100, 0, 0));
+        glm::mat4 view(1.0f); view = glm::translate(view, glm::vec3(-100, 0, 0));
         glm::vec3 translation = glm::vec3(200, 200, 0);
 
-        Shader shader("/home/denis/Projects/C++/OpenGL/shaders/Basic.shader");
+        Shader shader("/home/denis/Projects/C++/OpenGL/shaders/point.shader");
         shader.Bind();
-        shader.SetUniform4f("u_Color", 0.8f, 0.3f, 0.8f, 1.0f);
 
-        //TODO: make relative
-        Texture texture("/home/denis/Projects/C++/OpenGL/texture/ava.jpg");
-        texture.Bind();
-        shader.SetUniform1i("u_Texture", 0);
+        GLuint vbo_;
+        GLuint vao_;
 
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
+        glGenBuffers(1, &vbo_);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo_);
+        glBufferData(GL_ARRAY_BUFFER, points.size()*sizeof(*points.data()), points.data(), GL_STATIC_DRAW);
+
+        glGenVertexArrays(1, &vao_);
+        glBindVertexArray(vao_);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Point), 0);
+        glEnableVertexAttribArray( 0 );
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Point), (void*)(sizeof(glm::vec3)));
+        glEnableVertexAttribArray(1);
+
+        //va.Unbind();
+        //vb.Unbind();
         shader.Unbind();
 
         Renderer renderer;
 
-                // Animation stuff
-        float r = 0.0f;
-        float increment = 0.05f;
-
         // Loop until the user closes the window
         while (window.PoolEvents())
         {
-            renderer.Clear();
+            GL_ASSERT(glClear(GL_COLOR_BUFFER_BIT));
 
             shader.Bind();
-            shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-            renderer.Draw(va, ib, shader);
+            glBindVertexArray(0);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
+            //va.Bind();
+            //vb.Bind();
 
-            //{
-            //    static float f = 0.0f;
-            //    static int counter = 0;
+            glDrawArrays(GL_POINTS, 0, points.size());
 
-            //    ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
-
-            //    ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            //    ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            //    ImGui::Checkbox("Another Window", &show_another_window);
-
-            //    ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
-            //    ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
-
-            //    if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-            //        counter++;
-            //    ImGui::SameLine();
-            //    ImGui::Text("counter = %d", counter);
-
-            //    ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            //    ImGui::End();
-            //}
-
-            {
-                ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 900.0f);
-                ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-            }
+            UI_draw();
 
             glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
             glm::mat4 mvp = proj * view * model;
             shader.SetUniformMat4f("u_MVP", mvp);
-
-            // Animate the r value between 0.0 and 1.0
-            if (r > 1.0f)
-                increment = -0.05f;
-            else if (r < 0.0f)
-                increment = 0.05f;
-            r += increment;
-
-            ImGui::Render();
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         }
     }
 
